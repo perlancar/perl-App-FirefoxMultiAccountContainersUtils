@@ -81,7 +81,7 @@ sub firefox_mua_sort_containers {
     }
     return [404, "No such Firefox profile '$args{profile}', ".
                 "available profiles include: ".
-                join(", ", map {$_->{path}} @{$res->[2]})]
+                join(", ", map {$_->{name}} @{$res->[2]})]
         unless defined $path;
 
     $path = "$path/containers.json";
