@@ -10,6 +10,11 @@ use strict 'subs', 'vars';
 use warnings;
 use Log::ger;
 
+use Sort::Sub ();
+
+$Sort::Sub::argsopt_sortsub{sort_sub}{cmdline_aliases} = {S=>{}};
+$Sort::Sub::argsopt_sortsub{sort_args}{cmdline_aliases} = {A=>{}};
+
 our %SPEC;
 
 $SPEC{':package'} = {
@@ -37,8 +42,10 @@ _
             req => 1,
             pos => 0,
         },
-        #sortsub_routine => {},
-        #sortsub_routine_args => {},
+        %Sort::Sub::argsopt_sortsub,
+    },
+    features => {
+        dry_run => 1,
     },
 };
 sub firefox_mua_sort_containers {
@@ -49,6 +56,10 @@ sub firefox_mua_sort_containers {
     require JSON::MaybeXS;
 
     my %args = @_;
+
+    my $sort_sub  = $args{sort_sub}  // 'asciibetically';
+    my $sort_args = $args{sort_args} // [];
+    my $cmp = Sort::Sub::get_sorter($sort_sub, { map { split /=/, $_, 2 } @$sort_args });
 
     my $res;
 
@@ -77,15 +88,26 @@ sub firefox_mua_sort_containers {
     return [412, "Can't find '$path', is this Firefox using Multi-Account Containers?"]
         unless (-f $path);
 
-    log_info "Backing up $path to $path~ ...";
-    File::Copy::copy($path, "$path~") or
-          return [500, "Can't backup $path to $path~: $!"];
+    unless ($args{-dry_run}) {
+        log_info "Backing up $path to $path~ ...";
+        File::Copy::copy($path, "$path~") or
+              return [500, "Can't backup $path to $path~: $!"];
+    }
 
     my $json = JSON::MaybeXS::decode_json(File::Slurper::read_text($path));
 
     $json->{identities} = [
-        sort { $a->{name} cmp $b->{name} } @{ $json->{identities} }
+        sort {
+            $sort_sub eq 'by_perl_code' ? $cmp->($a, $b) : $cmp->($a->{name}, $b->{name})
+        }  @{ $json->{identities} }
     ];
+
+    if ($args{-dry_run}) {
+        # convert boolean object to 1/0 for display
+        for (@{ $json->{identities} }) { $_->{public} = $_->{public} ? 1:0 }
+
+        return [200, "OK (dry-run)", $json->{identities}];
+    }
 
     log_info "Writing $path ...";
     File::Slurper::write_text($path, JSON::MaybeXS::encode_json($json));
