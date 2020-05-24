@@ -50,12 +50,16 @@ sub firefox_mua_sort_containers {
 
     my %args = @_;
 
-    my $res = App::FirefoxUtils::firefox_is_running();
-    return [412, "Please stop Firefox first"] if $res->[0] == 200 && $res->[2];
+    my $res;
+
+    $res = App::FirefoxUtils::firefox_is_running();
+    return [500, "Can't check if Firefox is running: $res->[0] - $res->[1]"]
+        unless $res->[0] == 200;
+    return [412, "Please stop Firefox first"] if $res->[2];
 
     $res = Firefox::Util::Profile::list_firefox_profiles(detail=>1);
-    return [500, "Can't list Firefox profiles: $res->[0] - $res->[1]"] unless $res->[0] == 200;
-
+    return [500, "Can't list Firefox profiles: $res->[0] - $res->[1]"]
+        unless $res->[0] == 200;
     my $path;
     {
         for (@{ $res->[2] }) {
