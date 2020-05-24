@@ -1,4 +1,4 @@
-package App::FirefoxUtilMultiAccountContainersUtils;
+package App::FirefoxMultiAccountContainersUtils;
 
 # AUTHORITY
 # DATE
@@ -25,6 +25,12 @@ _
 $SPEC{firefox_mua_sort_containers} = {
     v => 1.1,
     summary => "Sort Firefox Multi-Account Containers add-on's containers",
+    description => <<'_',
+
+At the time of this writing, the UI does not provide a way to sort the
+containers. Thus this utility.
+
+_
     args => {
         profile => {
             schema => 'firefox::profile_name*',
@@ -67,6 +73,7 @@ sub firefox_mua_sort_containers {
     return [412, "Can't find '$path', is this Firefox using Multi-Account Containers?"]
         unless (-f $path);
 
+    log_info "Backing up $path to $path~ ...";
     File::Copy::copy($path, "$path~") or
           return [500, "Can't backup $path to $path~: $!"];
 
@@ -76,6 +83,7 @@ sub firefox_mua_sort_containers {
         sort { $a->{name} cmp $b->{name} } @{ $json->{identities} }
     ];
 
+    log_info "Writing $path ...";
     File::Slurper::write_text($path, JSON::MaybeXS::encode_json($json));
     [200];
 }
