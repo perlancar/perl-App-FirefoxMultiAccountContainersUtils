@@ -66,7 +66,12 @@ sub firefox_mua_sort_containers {
     $res = App::FirefoxUtils::firefox_is_running();
     return [500, "Can't check if Firefox is running: $res->[0] - $res->[1]"]
         unless $res->[0] == 200;
-    return [412, "Please stop Firefox first"] if $res->[2];
+    if ($args{-dry_run}) {
+        log_info "[DRY-RUN] Note that Firefox is still running, ".
+            "you should stop Firefox first when actually sorting containers";
+    } else {
+        return [412, "Please stop Firefox first"] if $res->[2];
+    }
 
     $res = Firefox::Util::Profile::list_firefox_profiles(detail=>1);
     return [500, "Can't list Firefox profiles: $res->[0] - $res->[1]"]
