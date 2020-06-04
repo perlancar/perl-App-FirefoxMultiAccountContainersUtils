@@ -29,7 +29,7 @@ _
 
 our %arg0_profile = (
     profile => {
-        schema => 'firefox::profile_name*',
+        schema => 'firefox::local_profile_name*',
         req => 1,
         pos => 0,
     },
@@ -125,11 +125,7 @@ the record. It can also choose to return false to instruct deleting the record.
 
 _
     args => {
-        profile => {
-            schema => 'firefox::profile_name*',
-            req => 1,
-            pos => 0,
-        },
+        %arg0_profile,
         code => {
             schema => ['any*', of=>['code*', 'str*']],
             req => 1,
@@ -215,11 +211,7 @@ containers. Thus this utility.
 
 _
     args => {
-        profile => {
-            schema => 'firefox::profile_name*',
-            req => 1,
-            pos => 0,
-        },
+        %arg0_profile,
         %Sort::Sub::argsopt_sortsub,
     },
     features => {
