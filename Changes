@@ -1,3 +1,9 @@
+0.009   2020-09-21  Released-By: PERLANCAR; Urgency: medium
+
+	- [ux] [cli firefox-container] If URL is not specified, open a
+	  blank tab in that container.
+
+
 0.008   2020-09-21  Released-By: PERLANCAR; Urgency: medium
 
 	- Add CLI: firefox-container (open new firefox tab in a specified
