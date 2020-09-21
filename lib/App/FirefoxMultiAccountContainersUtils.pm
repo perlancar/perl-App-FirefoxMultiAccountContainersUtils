@@ -35,6 +35,12 @@ our %arg0_profile = (
     },
 );
 
+our %argopt_profile = (
+    profile => {
+        schema => 'firefox::local_profile_name*',
+    },
+);
+
 sub _get_containers_json {
     require App::FirefoxUtils;
     require File::Copy;
@@ -46,14 +52,16 @@ sub _get_containers_json {
 
     my $res;
 
-    $res = App::FirefoxUtils::firefox_is_running();
-    return [500, "Can't check if Firefox is running: $res->[0] - $res->[1]"]
-        unless $res->[0] == 200;
-    if ($args->{-dry_run}) {
-        log_info "[DRY-RUN] Note that Firefox is still running, ".
-            "you should stop Firefox first when actually sorting containers";
-    } else {
-        return [412, "Please stop Firefox first"] if $res->[2];
+    if ($do_backup) {
+        $res = App::FirefoxUtils::firefox_is_running();
+        return [500, "Can't check if Firefox is running: $res->[0] - $res->[1]"]
+            unless $res->[0] == 200;
+        if ($args->{-dry_run}) {
+            log_info "[DRY-RUN] Note that Firefox is still running, ".
+                "you should stop Firefox first when actually sorting containers";
+        } else {
+            return [412, "Please stop Firefox first"] if $res->[2];
+        }
     }
 
     $res = Firefox::Util::Profile::list_firefox_profiles(detail=>1);
@@ -85,6 +93,32 @@ sub _get_containers_json {
     my $json = JSON::MaybeXS::decode_json(File::Slurper::read_text($path));
 
     [200, "OK", {path=>$path, content=>$json}];
+}
+
+sub _complete_container {
+    require Firefox::Util::Profile;
+
+    my %args = @_;
+
+    # XXX if firefox profile is already specified, only list containers for that
+    # profile.
+    my $res = Firefox::Util::Profile::list_firefox_profiles();
+    $res->[0] == 200 or return {message => "Can't list Firefox profiles: $res->[0] - $res->[1]"};
+
+    my %containers;
+    for my $profile (@{ $res->[2] }) {
+        my $cres = firefox_mua_list_containers(profile => $profile);
+        $cres->[0] == 200 or next;
+        for (@{ $cres->[2] }) {
+            next unless $_->{public};
+            next unless $_->{name};
+            $containers{ $_->{name} }++;
+        }
+    }
+    Complete::Util::complete_hash_key(
+        word => $args{word},
+        hash => \%containers,
+    );
 }
 
 $SPEC{firefox_mua_list_containers} = {
@@ -255,6 +289,76 @@ sub firefox_mua_sort_containers {
     [200];
 }
 
+$SPEC{firefox_container} = {
+    v => 1.1,
+    summary => "CLI to open URL in a new Firefox tab, in a specific multi-account container",
+    description => <<'_',
+
+This utility opens a new firefox tab in a specific multi-account container. This
+requires the Firefox Multi-Account Container, as well as another container
+called "Open external links in a container",
+<https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/>.
+
+The way it works, because add-on currently does not have hooks to the CLI, is
+via a custom protocol handler. For example, if you want to open
+`http://www.example.com/` in a container called `mycontainer`, you ask Firefox
+to open this URL:
+
+    ext+container:name=mycontainer&url=http://www.example.com/
+
+Ref: <https://github.com/mozilla/multi-account-containers/issues/365>
+
+_
+    args => {
+        %argopt_profile,
+        container => {
+            schema => 'str*',
+            completion => \&_complete_container,
+            req => 1,
+            pos => 0,
+        },
+        urls => {
+            'x.name.is_plural' => 1,
+            'x.name.singular' => 'url',
+            schema => ['array*', of=>'str*'],
+            req => 1,
+            pos => 1,
+            slurpy => 1,
+        },
+    },
+    features => {
+    },
+    examples => [
+        {
+            argv => [qw|mycontainer www.example.com www.example.com/url2|],
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+    ],
+    links => [
+        {url=>'prog:open-browser'},
+    ],
+};
+sub firefox_container {
+    require URI::Escape;
+
+    my %args = @_;
+    my $container = $args{container};
+
+    my @urls;
+    for my $url0 (@{ $args{urls} }) {
+        my $url = "ext+container:";
+        $url .= "name=" . URI::Escape::uri_escape($container);
+        $url .= "&url=" . URI::Escape::uri_escape($url0);
+        push @urls, $url;
+    }
+
+    my @cmd = ("firefox", @urls);
+    log_trace "Executing %s ...", \@cmd;
+    exec @cmd;
+    #[200]; # won't be reached
+}
+
 1;
 # ABSTRACT:
 
@@ -268,7 +372,10 @@ containers addon:
 #INSERT_EXECS_LIST
 
 
-=head1 SEE ALSO
+=head1 prepend:SEE ALSO
+
+Firefox Multi-Account Containers,
+L<https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/>
 
 Some other CLI utilities related to Firefox: L<App::FirefoxUtils>,
 L<App::DumpFirefoxHistory>.
