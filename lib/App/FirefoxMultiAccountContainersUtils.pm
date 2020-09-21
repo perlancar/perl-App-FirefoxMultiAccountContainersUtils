@@ -380,8 +380,16 @@ containers addon:
 
 =head1 prepend:SEE ALSO
 
-Firefox Multi-Account Containers,
+"Firefox Multi-Account Containers" add-on,
 L<https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/>
+
+"Open external links in a container" add-on,
+L<https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/> (repo
+at L<https://github.com/honsiorovskyi/open-url-in-container/>). The add-on also
+comes with a bash launcher script:
+L<https://github.com/honsiorovskyi/open-url-in-container/blob/master/bin/launcher.sh>.
+This C<firefox-container> Perl script is a slightly enhanced version of that
+launcher script.
 
 Some other CLI utilities related to Firefox: L<App::FirefoxUtils>,
 L<App::DumpFirefoxHistory>.
