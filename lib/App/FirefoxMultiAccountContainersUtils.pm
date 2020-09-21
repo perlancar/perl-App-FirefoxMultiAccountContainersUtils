@@ -301,7 +301,7 @@ called "Open external links in a container",
 
 The way it works, because add-on currently does not have hooks to the CLI, is
 via a custom protocol handler. For example, if you want to open
-`http://www.example.com/` in a container called `mycontainer`, you ask Firefox
+<http://www.example.com/> in a container called `mycontainer`, you ask Firefox
 to open this URL:
 
     ext+container:name=mycontainer&url=http://www.example.com/
