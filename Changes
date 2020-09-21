@@ -1,3 +1,11 @@
+0.010   2020-09-21  Released-By: PERLANCAR; Urgency: low
+
+	- No functional changes.
+
+	- [doc] Mention the 'Open external links in a container' as well as
+	  link to the bash launcher script.
+
+
 0.009   2020-09-21  Released-By: PERLANCAR; Urgency: medium
 
 	- [ux] [cli firefox-container] If URL is not specified, open a
