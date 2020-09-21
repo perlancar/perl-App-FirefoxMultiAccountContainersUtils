@@ -321,7 +321,6 @@ _
             'x.name.is_plural' => 1,
             'x.name.singular' => 'url',
             schema => ['array*', of=>'str*'],
-            req => 1,
             pos => 1,
             slurpy => 1,
         },
@@ -330,7 +329,14 @@ _
     },
     examples => [
         {
+            summary => 'Open two URLs in a container called "mycontainer"',
             argv => [qw|mycontainer www.example.com www.example.com/url2|],
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+        {
+            summary => 'If URL is not specified, will open a blank tab',
+            argv => [qw|mycontainer|],
             test => 0,
             'x.doc.show_result' => 0,
         },
@@ -346,7 +352,7 @@ sub firefox_container {
     my $container = $args{container};
 
     my @urls;
-    for my $url0 (@{ $args{urls} }) {
+    for my $url0 (@{ $args{urls} || ["about:blank"] }) {
         my $url = "ext+container:";
         $url .= "name=" . URI::Escape::uri_escape($container);
         $url .= "&url=" . URI::Escape::uri_escape($url0);
