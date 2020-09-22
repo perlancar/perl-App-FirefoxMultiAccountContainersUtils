@@ -295,12 +295,12 @@ $SPEC{firefox_container} = {
     description => <<'_',
 
 This utility opens a new firefox tab in a specific multi-account container. This
-requires the Firefox Multi-Account Container, as well as another container
+requires the Firefox Multi-Account Containers add-on, as well as another add-on
 called "Open external links in a container",
 <https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/>.
 
-The way it works, because add-on currently does not have hooks to the CLI, is
-via a custom protocol handler. For example, if you want to open
+The way it works, because add-ons currently do not have hooks to the CLI, is via
+a custom protocol handler. For example, if you want to open
 <http://www.example.com/> in a container called `mycontainer`, you ask Firefox
 to open this URL:
 
@@ -379,9 +379,6 @@ containers addon:
 
 
 =head1 prepend:SEE ALSO
-
-"Firefox Multi-Account Containers" add-on,
-L<https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/>
 
 "Open external links in a container" add-on,
 L<https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/> (repo
