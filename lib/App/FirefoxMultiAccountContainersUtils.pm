@@ -123,13 +123,7 @@ sub _complete_container {
 
 $SPEC{firefox_mua_list_containers} = {
     v => 1.1,
-    summary => "Sort Firefox Multi-Account Containers add-on's containers",
-    description => <<'_',
-
-At the time of this writing, the UI does not provide a way to sort the
-containers. Thus this utility.
-
-_
+    summary => "List Firefox Multi-Account Containers add-on's containers",
     args => {
         %arg0_profile,
     },
@@ -240,8 +234,8 @@ $SPEC{firefox_mua_sort_containers} = {
     summary => "Sort Firefox Multi-Account Containers add-on's containers",
     description => <<'_',
 
-At the time of this writing, the UI does not provide a way to sort the
-containers. Thus this utility.
+At the time of this writing, the UI of the Firefox Multi-Account Containers
+add-on does not provide a way to sort the containers. Thus this utility.
 
 _
     args => {
