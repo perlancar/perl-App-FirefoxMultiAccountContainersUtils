@@ -267,7 +267,9 @@ sub firefox_mua_sort_containers {
     my $json = $res->[2]{content};
     $json->{identities} = [
         sort {
-            $sort_sub eq 'by_perl_code' ? $cmp->($a, $b) : $cmp->($a->{name}, $b->{name})
+            my $a_name = defined$a->{name} ? $a->{name} : do { my $name = lc $a->{l10nID}; $name =~ s/^usercontext//; $name =~ s/\.label$//; $name };
+            my $b_name = defined$b->{name} ? $b->{name} : do { my $name = lc $b->{l10nID}; $name =~ s/^usercontext//; $name =~ s/\.label$//; $name };
+            $sort_sub eq 'by_perl_code' ? $cmp->($a, $b) : $cmp->($a_name, $b_name)
         }  @{ $json->{identities} }
     ];
 
@@ -372,7 +374,7 @@ containers addon:
 #INSERT_EXECS_LIST
 
 
-=head1 prepend:SEE ALSO
+=head1 SEE ALSO
 
 "Open external links in a container" add-on,
 L<https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/> (repo
