@@ -1,16 +1,16 @@
 package App::FirefoxMultiAccountContainersUtils;
 
-# AUTHORITY
-# DATE
-# DIST
-# VERSION
-
 use 5.010001;
 use strict 'subs', 'vars';
 use warnings;
 use Log::ger;
 
 use Sort::Sub ();
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
 
 $Sort::Sub::argsopt_sortsub{sort_sub}{cmdline_aliases} = {S=>{}};
 $Sort::Sub::argsopt_sortsub{sort_args}{cmdline_aliases} = {A=>{}};
@@ -234,8 +234,20 @@ $SPEC{firefox_mua_sort_containers} = {
     summary => "Sort Firefox Multi-Account Containers add-on's containers",
     description => <<'_',
 
-At the time of this writing, the UI of the Firefox Multi-Account Containers
-add-on does not provide a way to sort the containers. Thus this utility.
+This utility was written when the Firefox Multi-Account Containers add-on does
+not provide a way to reorder the containers. Now it does; you can click Manage
+Containers then use the hamburger button to drag the containers up and down to
+reorder.
+
+However, this utility is still useful particularly when you have lots of
+containers and want to sort it in some way. This utility provides a flexible
+sorting mechanism via using <pm:Sort:Sub> modules. For example:
+
+    % firefox-mua-sort-containers MYPROFILE
+    % firefox-mua-sort-containers MYPROFILE -S by_example -A example=foo,bar,baz,qux
+
+will first sort your containers asciibetically, then put specific containers
+that you use often (`foo`, `bar`, `baz`, `qux`) at the top.
 
 _
     args => {
