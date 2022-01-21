@@ -192,7 +192,7 @@ sub firefox_mua_modify_containers {
     my $code = $args{code};
     unless (ref $code eq 'CODE') {
         $code = "no strict; no warnings; package main; sub { $code }";
-        $code = eval $code;
+        $code = eval $code; ## no critic: BuiltinFunctions::ProhibitStringyEval
         return [400, "Cannot compile string code: $@"] if $@;
     }
 
