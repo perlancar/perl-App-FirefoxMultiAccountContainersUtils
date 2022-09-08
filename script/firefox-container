@@ -1,6 +1,6 @@
 #!perl
 
-use 5.010001;
+#use 5.010001;
 use strict;
 use warnings;
 
@@ -9,8 +9,17 @@ use warnings;
 # DIST
 # VERSION
 
-if (defined $ENV{FIREFOX_CONTAINER}) {
-    exec "open-firefox-container", $ENV{FIREFOX_CONTAINER}, @ARGV;
+my $container;
+if (defined(my $n = $ENV{FIREFOX_CONTAINER_ENV})) {
+    if (defined(my $c = $ENV{$n})) {
+        $container = $c;
+    }
+} elsif (defined(my $c = $ENV{FIREFOX_CONTAINER})) {
+    $container = $c;
+}
+
+if (defined $container) {
+    exec "open-firefox-container", $container, @ARGV;
 } else {
     exec "firefox", @ARGV;
 }
@@ -51,6 +60,21 @@ No other options are parsed by this wrapper. All will be passed to C<firefox>.
 =head2 FIREFOX_CONTAINER
 
 Set the name of container to open URL's in.
+
+=head2 FIREFOX_CONTAINER_ENV
+
+Set the name of environment variable to replace the default
+L</FIREFOX_CONTAINER>. Why would one want to do this? Because one will be able
+to use a shorter name for L</FIREFOX_CONTAINER>. So instead of this:
+
+ % FIREFOX_CONTAINER=mycontainer1 firefox-container ...
+ % FIREFOX_CONTAINER=mycontainer2 other-command ...
+
+you can instead use this:
+
+ % export FIREFOX_CONTAINER_ENV=FC
+ % FC=mycontainer1 firefox-container ...
+ % FC=mycontainer2 other-command ...
 
 
 =head1 SEE ALSO
