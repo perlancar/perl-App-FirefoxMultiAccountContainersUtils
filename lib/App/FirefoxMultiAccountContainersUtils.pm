@@ -297,7 +297,7 @@ sub firefox_mua_sort_containers {
     [200];
 }
 
-$SPEC{firefox_container} = {
+$SPEC{open_firefox_container} = {
     v => 1.1,
     summary => "CLI to open URL in a new Firefox tab, in a specific multi-account container",
     description => <<'_',
@@ -353,7 +353,7 @@ _
         {url=>'prog:open-browser'},
     ],
 };
-sub firefox_container {
+sub open_firefox_container {
     require URI::Escape;
 
     my %args = @_;
