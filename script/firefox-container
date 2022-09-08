@@ -1,0 +1,61 @@
+#!perl
+
+use 5.010001;
+use strict;
+use warnings;
+use Log::ger;
+
+use App::FirefoxMultiAccountContainersUtils;
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
+
+if (defined $ENV{FIREFOX_CONTAINER}) {
+    exec "open-firefox-container", $ENV{FIREFOX_CONTAINER}, @ARGV;
+} else {
+    exec "firefox", @ARGV;
+}
+
+# ABSTRACT: Firefox wrapper to open URL's in a specific container
+# PODNAME:
+
+=head1 SYNOPSIS
+
+Use like you would use L<firefox> command:
+
+ % FIREFOX_CONTAINER=mycontainer firefox-container [options] <URL>...
+
+Or set it as your BROWSER:
+
+ % export BROWSER=firefox-container
+
+then use it with commands that open URL's in browser, e.g.
+L<this-repo-on-github>:
+
+ % FIREFOX_CONTAINER=mycontainer this-repo-on-github
+
+
+=head1 DESCRIPTION
+
+This is a simple wrapper for B<firefox>. If the environment variable
+L</FIREFOX_CONTAINER> is defined, will open using L<open-firefox-container>.
+Otherwise, will simply exec C<firefox>.
+
+
+=head1 OPTIONS
+
+No other options are parsed by this wrapper. All will be passed to C<firefox>.
+
+
+=head1 ENVIRONMENT
+
+=head2 FIREFOX_CONTAINER
+
+Set the name of container to open URL's in.
+
+
+=head1 SEE ALSO
+
+L<open-firefox-container>
