@@ -3,6 +3,8 @@
 #use 5.010001;
 use strict;
 use warnings;
+use Log::ger::Screen;
+use Log::ger;
 
 # AUTHORITY
 # DATE
@@ -12,17 +14,22 @@ use warnings;
 my $container;
 if (defined(my $n = $ENV{FIREFOX_CONTAINER_ENV})) {
     if (defined(my $c = $ENV{$n})) {
+        log_trace "Using container '$c' (from $n env (from FIREFOX_CONTAINER_ENV env))";
         $container = $c;
     }
 } elsif (defined(my $c = $ENV{FIREFOX_CONTAINER})) {
+    log_trace "Using container '$c' (from FIREFOX_CONTAINER env))";
     $container = $c;
 }
 
+my @exec_cmd;
 if (defined $container) {
-    exec "open-firefox-container", $container, @ARGV;
+    @exec_cmd = ("open-firefox-container", $container, @ARGV);
 } else {
-    exec "firefox", @ARGV;
+    @exec_cmd = ("firefox", @ARGV);
 }
+log_trace "Exec: %s", \@exec_cmd;
+exec @exec_cmd;
 
 # ABSTRACT: Firefox wrapper to open URL's in a specific container
 # PODNAME:
