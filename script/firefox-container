@@ -16,10 +16,14 @@ if (defined(my $n = $ENV{FIREFOX_CONTAINER_ENV})) {
     if (defined(my $c = $ENV{$n})) {
         log_trace "Using container '$c' (from $n env (from FIREFOX_CONTAINER_ENV env))";
         $container = $c;
+    } else {
+        log_trace "No container set in $n env (set via FIREFOX_CONTAINER_ENV env)";
     }
 } elsif (defined(my $c = $ENV{FIREFOX_CONTAINER})) {
     log_trace "Using container '$c' (from FIREFOX_CONTAINER env))";
     $container = $c;
+} else {
+    log_trace "No container set";
 }
 
 my @exec_cmd;
