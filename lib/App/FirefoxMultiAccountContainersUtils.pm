@@ -58,7 +58,7 @@ sub _get_containers_json {
             unless $res->[0] == 200;
         if ($args->{-dry_run}) {
             log_info "[DRY-RUN] Note that Firefox is still running, ".
-                "you should stop Firefox first when actually sorting containers";
+                "you should stop Firefox first when actually modifying containers";
         } else {
             return [412, "Please stop Firefox first"] if $res->[2];
         }
