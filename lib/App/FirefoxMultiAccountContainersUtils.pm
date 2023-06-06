@@ -460,6 +460,16 @@ _
             pos => 1,
             slurpy => 1,
         },
+        extra_firefox_options_before => {
+            summary => 'Additional options (arguments) to put before the URLs',
+            schema => ['array*', of=>'str*'],
+            cmdline_aliases => {'b'=>{}},
+        },
+        extra_firefox_options_after => {
+            summary => 'Additional options (arguments) to put after the URLs',
+            schema => ['array*', of=>'str*'],
+            cmdline_aliases => {'a'=>{}},
+        },
     },
     features => {
     },
@@ -475,6 +485,17 @@ _
             argv => [qw|mycontainer|],
             test => 0,
             'x.doc.show_result' => 0,
+        },
+        {
+            summary => 'Open URL in a new tab in a new window',
+            argv => [qw|mycontainer www.example.com -b --new-window|],
+            test => 0,
+            'x.doc.show_result' => 0,
+            description => <<'_',
+
+This command passes the `--new-window` option to `firefox`.
+
+_
         },
     ],
     links => [
@@ -495,7 +516,12 @@ sub open_firefox_container {
         push @urls, $url;
     }
 
-    my @cmd = ("firefox", @urls);
+    my @cmd = (
+        "firefox",
+        @{$args{extra_firefox_options_before} // []},
+        @urls,
+        @{$args{extra_firefox_options_after} // []},
+    );
     log_trace "Executing %s ...", \@cmd;
     exec @cmd;
     #[200]; # won't be reached
