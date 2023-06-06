@@ -60,6 +60,12 @@ This is a simple wrapper for B<firefox>. If the environment variable
 L</FIREFOX_CONTAINER> is defined, will open using L<open-firefox-container>.
 Otherwise, will simply exec C<firefox>.
 
+Note that C<open-firefox-container> has a different set of options than
+C<firefox>, for example to pass the C<--new-window> option to C<firefox> with
+C<open-firefox-container>:
+
+ % FIREFOX_CONTAINER=mycontainer firefox-container -b --new-window www.example.com
+
 
 =head1 OPTIONS
 
