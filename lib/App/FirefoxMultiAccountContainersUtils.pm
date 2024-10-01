@@ -444,6 +444,19 @@ to open this URL:
 
 Ref: <https://github.com/mozilla/multi-account-containers/issues/365>
 
+**Related topics**
+
+In Google Chrome browser, profiles is what you would use to separate
+sessions/cookies (and other things). Opening a URL in a specific profile from
+the command-line is easier with Chrome:
+
+    % google-chrome --profile-directory="PROFILEDIRNAME" URL
+
+where `PROFILEDIRNAME` is a directory name under the profiles directory,
+typically `~/.config/google-chrome/` on Unix. You can use the
+<prog:list-chrome-profiles> (with option `-l`) (from <pm:App::ChromeUtils>) to
+list Chrome profiles.
+
 _
     args => {
         %argspecopt_profile,
