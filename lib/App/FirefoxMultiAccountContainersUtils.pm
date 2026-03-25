@@ -466,6 +466,9 @@ MARKDOWN
             req => 1,
             pos => 0,
         },
+        new_window => {
+            schema => 'bool*',
+        },
         urls => {
             'x.name.is_plural' => 1,
             'x.name.singular' => 'url',
@@ -532,6 +535,7 @@ sub open_firefox_container {
     my @cmd = (
         "firefox",
         @{$args{extra_firefox_options_before} // []},
+        ($args{new_window} ? ("--new-window") : ()),
         @urls,
         @{$args{extra_firefox_options_after} // []},
     );
